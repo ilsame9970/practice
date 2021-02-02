@@ -1,0 +1,35 @@
+CREATE TABLE t_board (
+	boardPk INT UNSIGNED AUTO_INCREMENT,
+	category INT UNSIGNED NOT NULL,
+	seq INT UNSIGNED NOT NULL,
+	title VARCHAR(100) NOT NULL,
+	ctnt VARCHAR(2000) NOT NULL,
+	hits INT UNSIGNED DEFAULT 0,
+	userPk INT UNSIGNED NOT NULL,
+	regDt DATETIME DEFAULT NOW(),
+	modDt DATETIME DEFAULT NOW(),
+	isDel INT(1) DEFAULT 0 CHECK (isDel IN (0, 1)),
+	PRIMARY KEY (boardPk),
+	CONSTRAINT fk_board_userPk	FOREIGN KEY (userPk)
+	REFERENCES t_user(userPk)
+);
+
+CREATE TABLE t_board_manage(
+	category INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	nm VARCHAR(10) NOT NULL,
+	orderBy INT UNSIGNED DEFAULT 0
+);
+
+INSERT INTO t_board_manage
+(category, nm, orderBy)
+VALUES 
+(1, '유머/정보', 1),
+(2, '축구', 2),
+(3, '쇼핑', 3),
+(4, '게임', 4);
+
+INSERT INTO t_board
+(category, seq, title, ctnt, userPk)
+SELECT 1, IFNULL(MAX(seq), 0) + 1, '제목', '내용', 3
+FROM t_board
+WHERE category = 1;
